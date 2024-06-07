@@ -19,8 +19,16 @@ You should hear a short robotic beep to let you know if it worked.
 
 You can open the settings by right clicking the tray icon (A green letter 'H')
 
+# Screenshots
+
+![image](https://github.com/hamurlik/AutoAccent/assets/75280571/4559b5d9-a6b2-4031-b5a3-3a27de978a4c)
+![image](https://github.com/hamurlik/AutoAccent/assets/75280571/8a5e5246-6d95-403c-9245-633c5c86696a)
+
+
 # Contact
 
-If you have any issues or requests, you can contact me on discord. Username is `hamurlik`.
+If you have any issues or requests, you can contact me on discord. Username is `hamurlik`
 
 I can make you a custom preset too.
+
+Keep in mind presets need to have detectable patterns, like "th" becoming "z", or "c" becoming "k" or "s" depending on the context.
