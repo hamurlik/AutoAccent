@@ -50,4 +50,5 @@ If you have any issues or requests, you can contact me on discord. Username is `
 
 I can make you a custom preset too.
 
-Keep in mind presets need to have detectable patterns, like "th" becoming "z", or "c" becoming "k" or "s" depending on the context.
+Keep in mind that presets need to have detectable patterns, like "th" becoming "z". Organic things can be hard to pick up in code as it can only read letters, not sounds. Not until I figure out how to
+ hook up a phonetic dictionary to it, anyway.
