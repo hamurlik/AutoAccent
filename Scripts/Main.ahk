@@ -5,7 +5,6 @@ Global Path_Conf := "Conf.ini"
 Global Path_ConfDefault := "Scripts\ConfDefault.ini"
 Global Path_Presets := "Presets"
 Global Path_Macros := "Macros"
-Global Path_Readme := "README.md"
 
 ;
 ;UIA library https://github.com/Descolada/UIA-v2

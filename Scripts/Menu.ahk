@@ -17,11 +17,6 @@ ResetSettings(ItemName, ItemPos, MyMenu) {
 	Reload
 }
 
-Menu_Simple(A_TrayMenu, "Open Readme", OpenReadme, "1&")
-OpenReadme(ItemName, ItemPos, MyMenu) {
-	Run(Path_Readme)
-}
-
 A_TrayMenu.Insert("1&")
 
 ExtraChanceSubmenu := Menu()
