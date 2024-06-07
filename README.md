@@ -15,16 +15,9 @@ Updating:
 # Usage
 
 To use, select a text field, type your message, and press the right shift key.
-
 You should hear a short robotic beep to let you know if it worked.
 
-
-You can change the key in the settings.
-
-
 You can open settings by right clicking the tray icon (A green letter 'H')
-
-You can also change the accent preset there.
 
 # Contact
 
