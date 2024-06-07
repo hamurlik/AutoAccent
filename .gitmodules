@@ -1,0 +1,3 @@
+[submodule "Scripts/Lib/UIA"]
+	path = Scripts/Lib/UIA
+	url = https://github.com/Descolada/UIA-v2.git
