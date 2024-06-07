@@ -21,7 +21,7 @@ Russian sounding presets. They don't include a word filter, they only change let
 
 - Asciizonian is the default, only uses ASCII characters.
 - Bogzonian is a version of Asciizonian, has funnier looking v and w.
-- Truezonian uses unicode characters.
+- Truezonian uses unicode characters. The only preset that uses random chance.
 
 To use Asciizonian and Bogzonian properly, you need to write your initial message using Cyrillic letters, transliterating into English.
 
