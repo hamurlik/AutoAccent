@@ -10,7 +10,7 @@ Global Path_Readme := "Readme.txt"
 ;
 ;UIA library https://github.com/Descolada/UIA-v2
 ;
-#Include ..\Scripts\Lib\UIA\Lib\UIA.ahk
+#Include ..\Scripts\Lib\UIA.ahk
 
 ;
 ;Input buffer
