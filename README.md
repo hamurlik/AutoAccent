@@ -17,7 +17,7 @@ Updating:
 To use, select a text field, type your message, and press the right shift key.
 You should hear a short robotic beep to let you know if it worked.
 
-You can open settings by right clicking the tray icon (A green letter 'H')
+You can open the settings by right clicking the tray icon (A green letter 'H')
 
 # Contact
 
