@@ -307,7 +307,7 @@ Step_CyrillicToLatin(&StrObj, Preset) {
 		Case "ф":
 			Replacement := "f"
 		Case "х":
-			Replacement := CyrillicLong("kh", "kh", "h", "h", LastIsPrev and PrevChar = "к", NextChar = "к")
+			Replacement := CyrillicLong("kh", "kh", "h", "h", LastIsPrev and PrevChar = "х", NextChar = "х")
 		Case "ц":
 			Replacement := CyrillicLong("ts", "ts", "s", "s", LastIsPrev and PrevChar = "ц", NextChar = "ц")
 		Case "ч":
