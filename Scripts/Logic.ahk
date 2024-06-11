@@ -59,7 +59,6 @@ Step_Letters(&StrObj, Preset) {
 
 				If Replacement != 0 {
 					Replacement := MatchCase(Replacement, Match[])
-
 					ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
 				}
 			}
@@ -85,6 +84,36 @@ Step_Letters(&StrObj, Preset) {
 
 			If Replacement != 0
 				ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
+		}
+	}
+}
+
+PresetFunctions["ReplaceVowelsWithV"] := Step_ReplaceVowelsWithV
+Step_ReplaceVowelsWithV(&StrObj, Preset) {
+	Regex(&StrObj, "iS)([" Preset["ReplaceVowelsWithV"]["RegexStr"] "])", Fn, Map("ReplaceVowelsWithV", Preset["ReplaceVowelsWithV"]))
+	RemoveAllFlags(&StrObj, "Marked_Vowel")
+
+	Fn(&StrObj, Str, Match, FoundPos, Parameters) {
+		If ShouldIgnore(StrObj, FoundPos)
+			Return
+
+		FlagSegment(&StrObj, FoundPos, Match.Len, "Marked_Vowel")
+
+		Key := StrLower(Match[])
+		PrevCharExists := FoundPos - 1 >= 1
+
+		If not ( PrevCharExists and HasFlag(StrObj[FoundPos - 1], "Marked_Vowel") ) {
+			PrevChar := PrevCharExists ? ReadChar(StrObj[FoundPos - 1]) : 0
+			If PrevChar = 0 or PrevChar = A_Space or PrevChar = "v" or PrevChar = "w"
+				Return
+
+			Chances := GetInfluencedChances(StrObj, FoundPos, [Parameters["ReplaceVowelsWithV"]["Keys"][Key]])
+			RandomIndex := GetRandomIndexFromChances(Chances)
+
+			If RandomIndex = 1 {
+				Replacement := MatchCase("v", Match[])
+				ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
+			}
 		}
 	}
 }
@@ -253,8 +282,8 @@ Step_CyrillicToLatin(&StrObj, Preset) {
 			Return
 
 		Char := StrLower(Match[])
-		PrevChar := FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_Cyrillic") ? ReadFlag(StrObj[FoundPos - 1], "Marked_Cyrillic") : ""
-		NextChar := FoundPos + 1 <= StrObj.Length ? ReadChar(StrObj[FoundPos + 1]) : ""
+		PrevChar := FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_Cyrillic") ? StrLower(ReadFlag(StrObj[FoundPos - 1], "Marked_Cyrillic")) : ""
+		NextChar := FoundPos + 1 <= StrObj.Length ? StrLower(ReadChar(StrObj[FoundPos + 1])) : ""
 		LastIsPrev := PrevChar != ""
 
 		RemoveAllFlags(&StrObj, "Marked_Cyrillic")

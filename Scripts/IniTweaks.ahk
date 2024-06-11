@@ -27,6 +27,20 @@ Section_ReplacementChance(&IniMap, SectionName, Section) {
 	IniMap[SectionName] := NewSection
 }
 
+IniMapTweaks["Sections"]["ReplaceVowelsWithV"] := Section_ReplaceVowelsWithV
+Section_ReplaceVowelsWithV(&IniMap, SectionName, Section) {
+	NewSection := Map()
+	NewSection["RegexStr"] := ""
+	NewSection["Keys"] := Map()
+
+	For Vowel,Chance in Section {
+		NewSection["RegexStr"] := NewSection["RegexStr"] Vowel
+		NewSection["Keys"][Vowel] := Chance
+	}
+
+	IniMap[SectionName] := NewSection
+}
+
 IniMapTweaks["Sections"]["IgnoredWords"] := Section_IgnoredWords
 Section_IgnoredWords(&IniMap, SectionName, Section) {
 	NewSection := Map()
