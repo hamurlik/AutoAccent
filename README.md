@@ -38,6 +38,9 @@ Additionally, "u~" becomes "ü", "n`" or "n~" becomes "ñ".
 
 This preset also puts upside down exclamation points and question marks. So "Hola!" becomes "¡Hola!".
 
+### Grenzelhoft
+German sounding preset. Has a word filter and some letter filters. Rather simple.
+
 # Screenshots
 
 ![image](https://github.com/hamurlik/AutoAccent/assets/75280571/4559b5d9-a6b2-4031-b5a3-3a27de978a4c)
