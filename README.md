@@ -16,14 +16,15 @@ The key can be changed in the settings.
 You can open the settings by right clicking the tray icon (Green letter 'H')
 
 # Presets
-### Asciizonian, Bogzonian, and Truezonian
+### Asciizonian, Bogzonian, Truezonian, and Zizozonian
 Russian sounding presets. They don't include a word filter, they only change letters.
 
 - Asciizonian is the default, only uses ASCII characters.
 - Bogzonian is a version of Asciizonian, has funnier looking v and w.
 - Truezonian uses unicode characters. The only preset that uses random chance.
+- Zizozonian is designed specifically to be as incomprehensible as possible.
 
-To use Asciizonian and Bogzonian properly, you need to write your initial message using Cyrillic letters, transliterating into English.
+To use Asciizonian, Bogzonian and Zizozonian properly, you need to write your initial message using Cyrillic letters, transliterating into English.
 
 So for example "Hello, how are you" would be written as "Хйелло, хов ар ю?" which the app then turns into "Khiyello, khow ar yu?".
 
