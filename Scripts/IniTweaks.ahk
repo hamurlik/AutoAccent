@@ -27,6 +27,26 @@ Section_ReplacementChance(&IniMap, SectionName, Section) {
 	IniMap[SectionName] := NewSection
 }
 
+IniMapTweaks["Sections"]["LettersAdvanced"] := Section_LettersAdvanced
+Section_LettersAdvanced(&IniMap, SectionName, Section) {
+	NewSection := Map()
+	NewSection["RegexStr"] := ""
+	NewSection["Keys"] := Map()
+
+	For Key,Arr in Section {
+		NewSection["RegexStr"] := NewSection["RegexStr"] Key "|"
+
+		NewSection["Keys"][Key] := Map()
+		NewSection["Keys"][Key]["Single"] := Arr[1]
+		NewSection["Keys"][Key]["Start"] := Arr.Has(2) ? Arr[2] : Arr[1]
+		NewSection["Keys"][Key]["Middle"] := Arr.Has(3) ? Arr[3] : Arr[1]
+		NewSection["Keys"][Key]["End"] := Arr.Has(4) ? Arr[4] : Arr[1]
+	}
+	NewSection["RegexStr"] := SubStr(NewSection["RegexStr"], 1, StrLen(NewSection["RegexStr"]) - 1)
+
+	IniMap[SectionName] := NewSection
+}
+
 IniMapTweaks["Sections"]["ReplaceVowelsWithV"] := Section_ReplaceVowelsWithV
 Section_ReplaceVowelsWithV(&IniMap, SectionName, Section) {
 	NewSection := Map()

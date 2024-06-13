@@ -272,102 +272,36 @@ Step_ReplaceC(&StrObj, Preset) {
 	}
 }
 
-PresetFunctions["CyrillicToLatin"] := Step_CyrillicToLatin
-Step_CyrillicToLatin(&StrObj, Preset) {
-	Regex(&StrObj, "iS)(\p{Cyrillic})", Fn)
-	RemoveAllFlags(&StrObj, "Marked_Cyrillic")
+PresetFunctions["LettersAdvanced"] := Step_LettersAdvanced
+Step_LettersAdvanced(&StrObj, Preset) {
+	Regex(&StrObj, "iS)(" Preset["LettersAdvanced"]["RegexStr"] ")", Fn, Map("PresetLettersAdvanced", Preset["LettersAdvanced"]))
+	RemoveAllFlags(&StrObj, "Marked_LettersAdvanced")
 
 	Fn(&StrObj, Str, Match, FoundPos, Parameters) {
 		If ShouldIgnore(StrObj, FoundPos)
 			Return
 
 		Char := StrLower(Match[])
-		PrevChar := FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_Cyrillic") ? StrLower(ReadFlag(StrObj[FoundPos - 1], "Marked_Cyrillic")) : ""
+		PrevChar := FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_LettersAdvanced") ? StrLower(ReadFlag(StrObj[FoundPos - 1], "Marked_LettersAdvanced")) : ""
 		NextChar := FoundPos + 1 <= StrObj.Length ? StrLower(ReadChar(StrObj[FoundPos + 1])) : ""
-		LastIsPrev := PrevChar != ""
 
-		RemoveAllFlags(&StrObj, "Marked_Cyrillic")
+		RemoveAllFlags(&StrObj, "Marked_LettersAdvanced")
+		FlagSegment(&StrObj, FoundPos, Match.Len, "Marked_LettersAdvanced", Char)
 
-		Replacement := ""
-		Switch Char
-		{
-		Case "а":
-			Replacement := "a"
-		Case "б":
-			Replacement := "b"
-		Case "в":
-			Replacement := "v"
-		Case "г":
-			Replacement := "g"
-		Case "д":
-			Replacement := "d"
-		Case "е":
-			Replacement := "e"
-		Case "ё":
-			Replacement := CyrillicLong("yo", "yo", "o", "o", LastIsPrev and PrevChar = "ё", NextChar = "ё")
-		Case "ж":
-			Replacement := CyrillicLong("zh", "z", "z", "zh", LastIsPrev and PrevChar = "ж", NextChar = "ж")
-		Case "з":
-			Replacement := "z"
-		Case "и":
-			Replacement := "i"
-		Case "й":
-			Replacement := CyrillicLong("iy", "i", "i", "iy", LastIsPrev and PrevChar = "й", NextChar = "й")
-		Case "к":
-			Replacement := "k"
-		Case "л":
-			Replacement := "l"
-		Case "м":
-			Replacement := "m"
-		Case "н":
-			Replacement := "n"
-		Case "о":
-			Replacement := "o"
-		Case "п":
-			Replacement := "p"
-		Case "р":
-			Replacement := "r"
-		Case "с":
-			Replacement := "s"
-		Case "т":
-			Replacement := "t"
-		Case "у":
-			Replacement := "u"
-		Case "ф":
-			Replacement := "f"
-		Case "х":
-			Replacement := CyrillicLong("kh", "kh", "h", "h", LastIsPrev and PrevChar = "х", NextChar = "х")
-		Case "ц":
-			Replacement := CyrillicLong("ts", "ts", "s", "s", LastIsPrev and PrevChar = "ц", NextChar = "ц")
-		Case "ч":
-			Replacement := CyrillicLong("ch", "ch", "h", "h", LastIsPrev and PrevChar = "ч", NextChar = "ч")
-		Case "ш":
-			Replacement := CyrillicLong("sh", "sh", "h", "h", LastIsPrev and PrevChar = "ш", NextChar = "ш")
-		Case "щ":
-			Replacement := CyrillicLong("sch", "s", "s", "sch", LastIsPrev and PrevChar = "щ", NextChar = "щ")
-		Case "ъ":
-			Replacement := "`""
-		Case "ы":
-			Replacement := CyrillicLong("yi", "yi", "i", "i", LastIsPrev and PrevChar = "ы", NextChar = "ы")
-		Case "ь":
-			Replacement := "`'"
-		Case "э":
-			Replacement := CyrillicLong("ye", "ye", "e", "e", LastIsPrev and PrevChar = "э", NextChar = "э")
-		Case "ю":
-			Replacement := CyrillicLong("yu", "yu", "u", "u", LastIsPrev and PrevChar = "ю", NextChar = "ю")
-		Case "я":
-			Replacement := CyrillicLong("ya", "ya", "a", "a", LastIsPrev and PrevChar = "я", NextChar = "я")
-		}
+		Single := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Single"]
+		Start := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Start"]
+		Middle := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Middle"]
+		End := Parameters["PresetLettersAdvanced"]["Keys"][Char]["End"]
 
-		FlagSegment(&StrObj, FoundPos, Match.Len, "Marked_Cyrillic", Char)
+		Replacement := ReplaceLong(Single, Start, Middle, End, PrevChar = Char, Nextchar = Char)
 
 		If Replacement != "" {
-			Replacement := MatchCase(Replacement, SubStr(Str, FoundPos, StrLen(Replacement)))
+			Replacement := MatchCase(Replacement, Match[])
 			ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
 		}
 	}
 
-	CyrillicLong(Single, Start, Middle, End, IsPrev, IsNext) {
+	ReplaceLong(Single, Start, Middle, End, IsPrev, IsNext) {
 		If not IsPrev and not IsNext
 			Return Single
 		Else If not IsPrev and IsNext
