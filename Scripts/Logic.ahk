@@ -51,7 +51,7 @@ Step_Letters(&StrObj, Preset) {
 
 		If Conf["Misc"]["GuaranteeIfPreviousLetter"] and FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_Letter") {
 			Last := ReadFlag(StrObj[FoundPos - 1], "Marked_Letter")
-			If Last["Key"] := Key {
+			If Last["Key"] = Key {
 				Replacement := Last["Passed"]
 
 				RemoveAllFlags(&StrObj, "Marked_Letter")
@@ -85,6 +85,49 @@ Step_Letters(&StrObj, Preset) {
 			If Replacement != 0
 				ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
 		}
+	}
+}
+
+PresetFunctions["LettersAdvanced"] := Step_LettersAdvanced
+Step_LettersAdvanced(&StrObj, Preset) {
+	Regex(&StrObj, "iS)(" Preset["LettersAdvanced"]["RegexStr"] ")", Fn, Map("PresetLettersAdvanced", Preset["LettersAdvanced"]))
+	RemoveAllFlags(&StrObj, "Marked_LettersAdvanced")
+
+	Fn(&StrObj, Str, Match, FoundPos, Parameters) {
+		If ShouldIgnore(StrObj, FoundPos)
+			Return
+
+		Char := StrLower(Match[])
+		PrevChar := FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_LettersAdvanced") ? StrLower(ReadFlag(StrObj[FoundPos - 1], "Marked_LettersAdvanced")) : ""
+		NextChar := FoundPos + 1 <= StrObj.Length ? StrLower(ReadChar(StrObj[FoundPos + 1])) : ""
+
+		RemoveAllFlags(&StrObj, "Marked_LettersAdvanced")
+		FlagSegment(&StrObj, FoundPos, Match.Len, "Marked_LettersAdvanced", Char)
+
+		Single := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Single"]
+		Start := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Start"]
+		Middle := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Middle"]
+		End := Parameters["PresetLettersAdvanced"]["Keys"][Char]["End"]
+
+		Replacement := ReplaceLong(Single, Start, Middle, End, PrevChar = Char, Nextchar = Char)
+
+		If Replacement != "" {
+			Replacement := MatchCase(Replacement, Match[])
+			ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
+		}
+	}
+
+	ReplaceLong(Single, Start, Middle, End, IsPrev, IsNext) {
+		If not IsPrev and not IsNext
+			Return Single
+		Else If not IsPrev and IsNext
+			Return Start
+		Else If IsPrev and IsNext
+			Return Middle
+		Else If IsPrev and not IsNext
+			Return End
+
+		Return Single
 	}
 }
 
@@ -246,6 +289,26 @@ Step_CapitalizeFirstLetter(&StrObj, Preset) {
 	}
 }
 
+PresetFunctions["CapitalizeLetters"] := Step_CapitalizeLetters
+Step_CapitalizeLetters(&StrObj, Preset) {
+	Regex(&StrObj, "iS)(" Preset["CapitalizeLetters"]["RegexStr"] ")", Fn, Map("PresetCapitalizeLetters", Preset["CapitalizeLetters"]))
+
+	Fn(&StrObj, Str, Match, FoundPos, Parameters) {
+		If ShouldIgnore(StrObj, FoundPos)
+			Return
+
+		Key := StrLower(Match[])
+
+		Chances := GetInfluencedChances(StrObj, FoundPos, [Parameters["PresetCapitalizeLetters"]["Keys"][Key]])
+		RandomIndex := GetRandomIndexFromChances(Chances)
+
+		If RandomIndex = 1 {
+			Replacement := StrUpper(Key)
+			ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
+		}
+	}
+}
+
 PresetFunctions["ReplaceC"] := Step_ReplaceC
 Step_ReplaceC(&StrObj, Preset) {
 	Regex(&StrObj, "iS)(c)", Fn)
@@ -255,7 +318,7 @@ Step_ReplaceC(&StrObj, Preset) {
 			Return
 
 		Replacement := "s"
-		If FoundPos + 1 <= StrLen(Str) {
+		If FoundPos + 1 <= StrObj.Length {
 			NextChar := StrObj.Has(FoundPos + 1) ? ReadChar(StrObj[FoundPos + 1]) : ""
 			If NextChar != "e" and NextChar != "i" and NextChar != "y" {
 			 	If NextChar != "k" and NextChar != "h" and NextChar != "'"
@@ -272,46 +335,36 @@ Step_ReplaceC(&StrObj, Preset) {
 	}
 }
 
-PresetFunctions["LettersAdvanced"] := Step_LettersAdvanced
-Step_LettersAdvanced(&StrObj, Preset) {
-	Regex(&StrObj, "iS)(" Preset["LettersAdvanced"]["RegexStr"] ")", Fn, Map("PresetLettersAdvanced", Preset["LettersAdvanced"]))
-	RemoveAllFlags(&StrObj, "Marked_LettersAdvanced")
+PresetFunctions["OldZinzo"] := Step_OldZinzo
+Step_OldZinzo(&StrObj, Preset) {
+	ConstantsArr := ["б", "в", "г", "д", "ж", "з", "к", "л", "м", "н", "п", "р", "с", "т", "ф", "х", "ц", "ч", "ш", "щ"]
+	VowelsArr := ["а", "е", "и", "i", "о", "у", "ы", "э", "ю", "я", "v", "ё", "й"]
 
-	Fn(&StrObj, Str, Match, FoundPos, Parameters) {
+	ConstantsMap := Map()
+	For i,Letter in ConstantsArr
+		ConstantsMap[Letter] := true
+
+	VowelsMap := Map()
+	For i,Letter in VowelsArr
+		VowelsMap[Letter] := true
+
+	Regex(&StrObj, "iS)(*UCP)(\b(\w+)\b)", Fn1)
+	Fn1(&StrObj, Str, Match, FoundPos, Parameters) {
 		If ShouldIgnore(StrObj, FoundPos)
 			Return
 
-		Char := StrLower(Match[])
-		PrevChar := FoundPos - 1 >= 1 and HasFlag(StrObj[FoundPos - 1], "Marked_LettersAdvanced") ? StrLower(ReadFlag(StrObj[FoundPos - 1], "Marked_LettersAdvanced")) : ""
-		NextChar := FoundPos + 1 <= StrObj.Length ? StrLower(ReadChar(StrObj[FoundPos + 1])) : ""
-
-		RemoveAllFlags(&StrObj, "Marked_LettersAdvanced")
-		FlagSegment(&StrObj, FoundPos, Match.Len, "Marked_LettersAdvanced", Char)
-
-		Single := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Single"]
-		Start := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Start"]
-		Middle := Parameters["PresetLettersAdvanced"]["Keys"][Char]["Middle"]
-		End := Parameters["PresetLettersAdvanced"]["Keys"][Char]["End"]
-
-		Replacement := ReplaceLong(Single, Start, Middle, End, PrevChar = Char, Nextchar = Char)
-
-		If Replacement != "" {
-			Replacement := MatchCase(Replacement, Match[])
-			ModifyStrObj(&StrObj, FoundPos, Match.Len, Replacement)
-		}
+		LastChar := SubStr(Match[], Match.Len, 1)
+		If ConstantsMap.Has(LastChar)
+			ModifyStrObj(&StrObj, FoundPos + Match.Len, 0, "ъ")
 	}
 
-	ReplaceLong(Single, Start, Middle, End, IsPrev, IsNext) {
-		If not IsPrev and not IsNext
-			Return Single
-		Else If not IsPrev and IsNext
-			Return Start
-		Else If IsPrev and IsNext
-			Return Middle
-		Else If IsPrev and not IsNext
-			Return End
+	Regex(&StrObj, "iS)(и)", Fn2)
+	Fn2(&StrObj, Str, Match, FoundPos, Parameters) {
+		If ShouldIgnore(StrObj, FoundPos)
+			Return
 
-		Return Single
+		If FoundPos + 1 <= StrObj.Length and VowelsMap.Has(ReadChar(StrObj[FoundPos + 1]))
+			ModifyStrObj(&StrObj, FoundPos, 1, "i")
 	}
 }
 

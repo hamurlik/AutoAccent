@@ -47,6 +47,22 @@ Section_LettersAdvanced(&IniMap, SectionName, Section) {
 	IniMap[SectionName] := NewSection
 }
 
+IniMapTweaks["Sections"]["CapitalizeLetters"] := Section_CapitalizeLetters
+Section_CapitalizeLetters(&IniMap, SectionName, Section) {
+	NewSection := Map()
+	NewSection["RegexStr"] := ""
+	NewSection["Keys"] := Map()
+
+	For Key,Chance in Section {
+		NewSection["RegexStr"] := NewSection["RegexStr"] Key "|"
+
+		NewSection["Keys"][Key] := Chance
+	}
+	NewSection["RegexStr"] := SubStr(NewSection["RegexStr"], 1, StrLen(NewSection["RegexStr"]) - 1)
+
+	IniMap[SectionName] := NewSection
+}
+
 IniMapTweaks["Sections"]["ReplaceVowelsWithV"] := Section_ReplaceVowelsWithV
 Section_ReplaceVowelsWithV(&IniMap, SectionName, Section) {
 	NewSection := Map()
